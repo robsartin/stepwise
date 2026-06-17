@@ -51,7 +51,8 @@ Dependencies point inward; the core never imports the SDK, DOM, network, or a re
 - **Adapters (`src/adapters/`)** — content: bundled JSON loading + validation, and
   `generateRecipe(dishName)` (LLM, schema-validated, with timeout + fallback).
 - **SDK glue (`src/sdk/`)** — `Renderer` painting `StepView` to text containers, event→`Command`
-  translation (tap = next, scroll-up = back, double-tap = exit), and the `SttClient`.
+  translation (click or scroll-down = next, scroll-up = back/previous, double-tap = exit), and
+  the `SttClient`.
 - **Shell (`src/main.ts`)** — composition root: builds the real clock + SDK bindings, wires
   sources → controller/timer → renderer.
 
