@@ -13,8 +13,8 @@
     },
     {
       "name": "network",
-      "whitelist": ["api.anthropic.com"],
-      "desc": "Generate a recipe on demand from a dish name."
+      "whitelist": ["api.anthropic.com", "api.deepgram.com"],
+      "desc": "Generate recipes on demand and stream mic audio for voice commands."
     }
   ],
   "supported_languages": ["en"]
