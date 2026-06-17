@@ -67,4 +67,33 @@ describe('StepWiseSession', () => {
     session.handle('next');
     expect(last().phase).toBe('done');
   });
+
+  it('repeat re-emits the current step view without advancing', () => {
+    const { session, views, last } = setup();
+    const before = views.length;
+    session.handle('repeat');
+    expect(views.length).toBe(before + 1);
+    expect(last()).toMatchObject({ stepNumber: 1, text: 'one', timer: null });
+  });
+
+  it('startTimer on an untimed step emits a view with no timer', () => {
+    const { session, last } = setup();
+    session.handle('startTimer');
+    expect(last().timer).toBeNull();
+  });
+
+  it('pauseTimer halts the countdown so time stops elapsing', () => {
+    const { session, clock, last } = setup();
+    session.handle('next'); // enter the timed step; timer auto-starts at 3
+    session.handle('pauseTimer');
+    clock.advance(2000);
+    expect(last().timer).toEqual({ label: 'Simmer', remainingSec: 3 });
+  });
+
+  it('ingredients is a no-op and emits nothing', () => {
+    const { session, views } = setup();
+    const before = views.length;
+    session.handle('ingredients');
+    expect(views.length).toBe(before);
+  });
 });
