@@ -1,0 +1,49 @@
+{
+  "id": "aglio-e-olio",
+  "title": "Spaghetti Aglio e Olio",
+  "servings": 2,
+  "ingredients": [
+    "200g spaghetti",
+    "4 cloves garlic, thinly sliced",
+    "60ml olive oil",
+    "Chili flakes",
+    "Chopped parsley",
+    "Salt for the pasta water"
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "text": "Bring a large pot of salted water to a boil.",
+      "durationSec": 360,
+      "note": "~6 min to boil"
+    },
+    {
+      "index": 1,
+      "text": "Add the spaghetti and cook until al dente.",
+      "durationSec": 540,
+      "note": "~9 min"
+    },
+    {
+      "index": 2,
+      "text": "Meanwhile, warm the oil and gently fry the garlic until pale gold.",
+      "durationSec": 180,
+      "note": "low heat - don't burn it"
+    },
+    {
+      "index": 3,
+      "text": "Add a pinch of chili flakes, then turn off the heat."
+    },
+    {
+      "index": 4,
+      "text": "Reserve a cup of pasta water, then drain the pasta."
+    },
+    {
+      "index": 5,
+      "text": "Toss the pasta in the oil with a splash of pasta water to emulsify."
+    },
+    {
+      "index": 6,
+      "text": "Stir through the parsley and serve."
+    }
+  ]
+}

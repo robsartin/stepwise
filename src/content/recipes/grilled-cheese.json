@@ -1,0 +1,38 @@
+{
+  "id": "grilled-cheese",
+  "title": "Grilled Cheese",
+  "servings": 1,
+  "ingredients": ["2 slices bread", "2 slices cheddar", "Butter, softened"],
+  "steps": [
+    {
+      "index": 0,
+      "text": "Butter one side of each slice of bread."
+    },
+    {
+      "index": 1,
+      "text": "Heat a skillet over medium-low heat.",
+      "durationSec": 120,
+      "note": "~2 min to heat"
+    },
+    {
+      "index": 2,
+      "text": "Lay one slice butter-side down, add the cheese, top with the second slice butter-side up."
+    },
+    {
+      "index": 3,
+      "text": "Toast the first side until golden.",
+      "durationSec": 180,
+      "note": "~3 min"
+    },
+    {
+      "index": 4,
+      "text": "Flip and toast until golden and the cheese melts.",
+      "durationSec": 180,
+      "note": "~3 min"
+    },
+    {
+      "index": 5,
+      "text": "Move to a board, rest a minute, then cut and serve."
+    }
+  ]
+}

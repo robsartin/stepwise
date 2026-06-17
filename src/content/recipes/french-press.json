@@ -1,0 +1,40 @@
+{
+  "id": "french-press",
+  "title": "French Press Coffee",
+  "servings": 2,
+  "ingredients": [
+    "30g coarse-ground coffee",
+    "500g water, just off the boil (~95C)",
+    "A French press"
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "text": "Heat the water to just off the boil, about 95C.",
+      "durationSec": 180,
+      "note": "~3 min to heat"
+    },
+    {
+      "index": 1,
+      "text": "Add the coarse-ground coffee to the empty press."
+    },
+    {
+      "index": 2,
+      "text": "Pour in the hot water, saturating all the grounds."
+    },
+    {
+      "index": 3,
+      "text": "Set the lid on top without pressing, and let it steep.",
+      "durationSec": 240,
+      "note": "4 min steep"
+    },
+    {
+      "index": 4,
+      "text": "Slowly press the plunger all the way down."
+    },
+    {
+      "index": 5,
+      "text": "Pour and serve right away so it does not over-extract."
+    }
+  ]
+}
