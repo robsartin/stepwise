@@ -15,8 +15,8 @@ export class SdkRenderer implements Renderer {
     const header = `${view.recipeTitle}    ${view.stepNumber} / ${view.stepCount}`;
     const body = view.phase === 'done' ? `All done!\n\n${view.text}` : view.text;
     const footer = view.timer
-      ? `${view.timer.label === 'DONE' ? '✔ ' : '⏲ '}${view.timer.label}  ${formatDuration(view.timer.remainingSec)}`
-      : 'say "next" · "back" · "repeat"';
+      ? `${view.timer.label === 'DONE' ? '** DONE **' : view.timer.label}  ${formatDuration(view.timer.remainingSec)}`
+      : 'say: next / back / repeat';
 
     this.queue = this.queue
       .then(() => this.write(HEADER_ID, 'header', header))
