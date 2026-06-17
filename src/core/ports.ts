@@ -20,6 +20,20 @@ export interface StepView {
   timer: { label: string; remainingSec: number } | null;
 }
 
+/** One row in the recipe picker. */
+export interface MenuItem {
+  label: string;
+  selected: boolean;
+}
+
+/** Everything the renderer needs to paint the recipe picker. */
+export interface MenuView {
+  title: string;
+  items: MenuItem[];
+  hint: string;
+}
+
 export interface Renderer {
   render(view: StepView): void | Promise<void>;
+  renderMenu(view: MenuView): void | Promise<void>;
 }

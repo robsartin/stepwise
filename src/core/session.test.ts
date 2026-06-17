@@ -96,4 +96,13 @@ describe('StepWiseSession', () => {
     session.handle('ingredients');
     expect(views.length).toBe(before);
   });
+
+  it('stop() halts the timer so no further views are emitted', () => {
+    const { session, clock, views } = setup();
+    session.handle('next'); // enter the timed step; timer is running
+    const before = views.length;
+    session.stop();
+    clock.advance(5000);
+    expect(views.length).toBe(before);
+  });
 });

@@ -35,6 +35,11 @@ export class StepWiseSession {
     this.enterStep();
   }
 
+  /** Halt the timer so an abandoned session stops repainting (e.g. on exit to the picker). */
+  stop(): void {
+    this.timer.pause();
+  }
+
   handle(command: Command): void {
     switch (command) {
       case 'next':
