@@ -1,5 +1,5 @@
 import { TextContainerUpgrade, type EvenAppBridge } from '@evenrealities/even_hub_sdk';
-import type { Renderer, StepView } from '../core/ports';
+import type { Renderer, StepView, MenuView } from '../core/ports';
 import { formatDuration } from '../core/format';
 
 const HEADER_ID = 1;
@@ -22,6 +22,15 @@ export class SdkRenderer implements Renderer {
       .then(() => this.write(HEADER_ID, 'header', header))
       .then(() => this.write(BODY_ID, 'body', body))
       .then(() => this.write(FOOTER_ID, 'footer', footer));
+  }
+
+  renderMenu(view: MenuView): void {
+    const body = view.items.map((item) => `${item.selected ? '> ' : '  '}${item.label}`).join('\n');
+
+    this.queue = this.queue
+      .then(() => this.write(HEADER_ID, 'header', view.title))
+      .then(() => this.write(BODY_ID, 'body', body))
+      .then(() => this.write(FOOTER_ID, 'footer', view.hint));
   }
 
   private write(containerID: number, containerName: string, content: string): Promise<unknown> {

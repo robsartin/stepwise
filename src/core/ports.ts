@@ -35,4 +35,5 @@ export interface MenuView {
 
 export interface Renderer {
   render(view: StepView): void | Promise<void>;
+  renderMenu(view: MenuView): void | Promise<void>;
 }
