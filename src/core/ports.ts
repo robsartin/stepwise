@@ -8,7 +8,7 @@ export interface CommandSource {
   subscribe(handler: (command: Command) => void): () => void;
 }
 
-export type Phase = 'browsing' | 'cooking' | 'done';
+export type Phase = 'cooking' | 'done';
 
 /** Everything the renderer needs to paint one frame of the glasses HUD. */
 export interface StepView {
