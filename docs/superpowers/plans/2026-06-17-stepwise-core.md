@@ -11,6 +11,7 @@
 **Workflow:** Pure TDD (red → green → refactor → commit). All work happens on branch `feat/stepwise-core`; a single PR squash-merges to `main`. Run a single test file with `npx vitest run <path>`.
 
 **Type contracts (defined once, reused everywhere):**
+
 - `Step { index: number; text: string; durationSec?: number; note?: string }` — `src/core/recipe.ts` (exists)
 - `Recipe { id; title; servings?; ingredients: string[]; steps: Step[] }` — `src/core/recipe.ts` (exists)
 - `Command = 'next' | 'back' | 'repeat' | 'startTimer' | 'pauseTimer' | 'ingredients'` — `src/core/command.ts` (exists)
@@ -22,27 +23,28 @@
 
 ## File structure
 
-| File | Responsibility | Layer / coverage |
-|------|----------------|------------------|
-| `src/core/recipe-schema.ts` | zod schema + `parseRecipe(unknown): Recipe` | core (covered) |
-| `src/core/format.ts` | `formatDuration(sec): "m:ss"` | core (covered) |
-| `src/core/keywords.ts` | `matchKeyword(text): Command \| null` | core (covered) |
-| `src/core/navigation.ts` | `NavigationController` | core (covered) |
-| `src/core/timer.ts` | `TimerEngine` (injected `Clock`) | core (covered) |
-| `src/core/session.ts` | `StepWiseSession` — orchestrates nav+timer, emits `StepView` | core (covered) |
-| `src/adapters/content/bundled.ts` | `loadBundledRecipes(): Recipe[]` | adapters (covered) |
-| `src/adapters/content/generate.ts` | `generateRecipe(dishName, client): Promise<Recipe>` | adapters (covered) |
-| `src/sdk/events.ts` | `eventToCommand(event): Command \| null` | sdk (tested, excluded from thresholds) |
-| `src/sdk/renderer.ts` | `SdkRenderer` paints `StepView` via the bridge | sdk (manual) |
-| `src/sdk/asr-source.ts` | `AsrCommandSource` — STT snapshots → `Command` | sdk (manual) |
-| `src/main.ts` | composition root (rewrite of scaffold) | shell (manual) |
-| `test/support/fake-clock.ts` | `FakeClock` test double | test support |
+| File                               | Responsibility                                               | Layer / coverage                       |
+| ---------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| `src/core/recipe-schema.ts`        | zod schema + `parseRecipe(unknown): Recipe`                  | core (covered)                         |
+| `src/core/format.ts`               | `formatDuration(sec): "m:ss"`                                | core (covered)                         |
+| `src/core/keywords.ts`             | `matchKeyword(text): Command \| null`                        | core (covered)                         |
+| `src/core/navigation.ts`           | `NavigationController`                                       | core (covered)                         |
+| `src/core/timer.ts`                | `TimerEngine` (injected `Clock`)                             | core (covered)                         |
+| `src/core/session.ts`              | `StepWiseSession` — orchestrates nav+timer, emits `StepView` | core (covered)                         |
+| `src/adapters/content/bundled.ts`  | `loadBundledRecipes(): Recipe[]`                             | adapters (covered)                     |
+| `src/adapters/content/generate.ts` | `generateRecipe(dishName, client): Promise<Recipe>`          | adapters (covered)                     |
+| `src/sdk/events.ts`                | `eventToCommand(event): Command \| null`                     | sdk (tested, excluded from thresholds) |
+| `src/sdk/renderer.ts`              | `SdkRenderer` paints `StepView` via the bridge               | sdk (manual)                           |
+| `src/sdk/asr-source.ts`            | `AsrCommandSource` — STT snapshots → `Command`               | sdk (manual)                           |
+| `src/main.ts`                      | composition root (rewrite of scaffold)                       | shell (manual)                         |
+| `test/support/fake-clock.ts`       | `FakeClock` test double                                      | test support                           |
 
 ---
 
 ## Task 1: Recipe schema validation
 
 **Files:**
+
 - Create: `src/core/recipe-schema.ts`
 - Test: `src/core/recipe-schema.test.ts`
 
@@ -150,6 +152,7 @@ git commit -m "feat: validate recipes with a zod schema"
 ## Task 2: Duration formatting
 
 **Files:**
+
 - Create: `src/core/format.ts`
 - Test: `src/core/format.test.ts`
 
@@ -208,6 +211,7 @@ git commit -m "feat: add m:ss duration formatting"
 ## Task 3: Keyword matching
 
 **Files:**
+
 - Create: `src/core/keywords.ts`
 - Test: `src/core/keywords.test.ts`
 
@@ -296,6 +300,7 @@ git commit -m "feat: match spoken keywords to commands"
 ## Task 4: NavigationController
 
 **Files:**
+
 - Modify: `src/core/ports.ts` (narrow `Phase` to `'cooking' | 'done'`)
 - Create: `src/core/navigation.ts`
 - Test: `src/core/navigation.test.ts`
@@ -455,6 +460,7 @@ git commit -m "feat: step navigation with cooking/done phases"
 ## Task 5: TimerEngine
 
 **Files:**
+
 - Create: `test/support/fake-clock.ts`
 - Create: `src/core/timer.ts`
 - Test: `src/core/timer.test.ts`
@@ -655,6 +661,7 @@ git commit -m "feat: per-step countdown timer with injected clock"
 ## Task 6: StepWiseSession (core orchestration)
 
 **Files:**
+
 - Create: `src/core/session.ts`
 - Test: `src/core/session.test.ts`
 
@@ -853,7 +860,7 @@ export class StepWiseSession {
 }
 ```
 
-> Note: `enterStep` calls `startStepTimer` which sets `remaining` *before* `timer.start`, so the auto-start view shows the full duration. `clearTimer` runs first to reset state from the prior step.
+> Note: `enterStep` calls `startStepTimer` which sets `remaining` _before_ `timer.start`, so the auto-start view shows the full duration. `clearTimer` runs first to reset state from the prior step.
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -872,6 +879,7 @@ git commit -m "feat: orchestrate navigation and timers into StepView"
 ## Task 7: Bundled recipe loader
 
 **Files:**
+
 - Create: `src/adapters/content/bundled.ts`
 - Test: `src/adapters/content/bundled.test.ts`
 
@@ -938,6 +946,7 @@ git commit -m "feat: load and validate bundled recipes"
 ## Task 8: AI recipe generation
 
 **Files:**
+
 - Create: `src/adapters/content/generate.ts`
 - Test: `src/adapters/content/generate.test.ts`
 
@@ -945,7 +954,7 @@ The LLM call is injected as a `RecipeGenerator` function so unit tests never hit
 
 - [ ] **Step 1: Write the failing test**
 
-```ts
+````ts
 // src/adapters/content/generate.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { generateRecipe } from './generate';
@@ -985,7 +994,7 @@ describe('generateRecipe', () => {
     await expect(generateRecipe('omelette', generator)).rejects.toThrow();
   });
 });
-```
+````
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -994,7 +1003,7 @@ Expected: FAIL — cannot find module `./generate`.
 
 - [ ] **Step 3: Write minimal implementation**
 
-```ts
+````ts
 // src/adapters/content/generate.ts
 import type { Recipe } from '../../core/recipe';
 import { parseRecipe } from '../../core/recipe-schema';
@@ -1028,7 +1037,7 @@ export async function generateRecipe(
   const parsed = JSON.parse(stripFences(raw));
   return parseRecipe(parsed);
 }
-```
+````
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -1082,6 +1091,7 @@ git commit -m "feat: AI recipe generation with injected generator"
 ## Task 9: SDK event → command mapping
 
 **Files:**
+
 - Create: `src/sdk/events.ts`
 - Test: `src/sdk/events.test.ts`
 
@@ -1101,15 +1111,15 @@ describe('eventToCommand', () => {
   });
 
   it('maps scroll up to back', () => {
-    expect(
-      eventToCommand({ textEvent: { eventType: OsEventTypeList.SCROLL_TOP_EVENT } }),
-    ).toBe('back');
+    expect(eventToCommand({ textEvent: { eventType: OsEventTypeList.SCROLL_TOP_EVENT } })).toBe(
+      'back',
+    );
   });
 
   it('maps scroll down to next', () => {
-    expect(
-      eventToCommand({ textEvent: { eventType: OsEventTypeList.SCROLL_BOTTOM_EVENT } }),
-    ).toBe('next');
+    expect(eventToCommand({ textEvent: { eventType: OsEventTypeList.SCROLL_BOTTOM_EVENT } })).toBe(
+      'next',
+    );
   });
 
   it('returns null for a double-tap (handled as exit elsewhere)', () => {
@@ -1172,6 +1182,7 @@ git commit -m "feat: map SDK input events to commands"
 ## Task 10: SDK renderer, ASR source, and composition root
 
 **Files:**
+
 - Create: `src/sdk/renderer.ts`
 - Create: `src/sdk/asr-source.ts`
 - Modify: `src/main.ts` (full rewrite)
@@ -1182,10 +1193,7 @@ This task is SDK glue — excluded from coverage thresholds and verified in the 
 
 ```ts
 // src/sdk/renderer.ts
-import {
-  TextContainerUpgrade,
-  type EvenAppBridge,
-} from '@evenrealities/even_hub_sdk';
+import { TextContainerUpgrade, type EvenAppBridge } from '@evenrealities/even_hub_sdk';
 import type { Renderer, StepView } from '../core/ports';
 import { formatDuration } from '../core/format';
 
