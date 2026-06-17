@@ -51,12 +51,13 @@ const renderer = new SdkRenderer(bridge);
 const session = new StepWiseSession(recipe, realClock(), (view) => renderer.render(view));
 session.start();
 
-const asr = new AsrCommandSource(import.meta.env.VITE_STT_API_KEY ?? '', (err) =>
-  console.error('ASR error:', err),
-);
-const unsubscribeAsr = asr.subscribe((command) => session.handle(command));
-await bridge.audioControl(true);
+const sttKey = import.meta.env.VITE_STT_API_KEY ?? '';
+const asr = new AsrCommandSource(sttKey, (err) => console.error('ASR error:', err));
 
+// Gesture/event input is wired FIRST and synchronously. Navigation must never
+// depend on microphone or STT setup — those can fail or hang where there's no
+// mic (e.g. the simulator), and must not take the tap/scroll handlers down with
+// them.
 const unsubscribe = bridge.onEvenHubEvent((event) => {
   const pcm = event.audioEvent?.audioPcm;
   if (pcm) asr.sendPcm(pcm);
@@ -74,8 +75,16 @@ const unsubscribe = bridge.onEvenHubEvent((event) => {
   if (command) session.handle(command);
 });
 
+// Voice control is best-effort: skip it entirely without a key (an empty key
+// builds an invalid WebSocket), and never await mic setup on the critical path.
+let unsubscribeAsr = () => {};
+if (sttKey) {
+  unsubscribeAsr = asr.subscribe((command) => session.handle(command));
+  void bridge.audioControl(true).catch((err) => console.error('audioControl failed:', err));
+}
+
 window.addEventListener('beforeunload', () => {
-  bridge.audioControl(false);
+  void bridge.audioControl(false);
   unsubscribeAsr();
   unsubscribe();
 });

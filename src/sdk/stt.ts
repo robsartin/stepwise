@@ -30,6 +30,10 @@ export function startSttStream(
   onSnapshot: (snap: SttSnapshot) => void,
   onError?: (err: unknown) => void,
 ): SttClient {
+  if (!apiKey) {
+    throw new Error('STT requires an API key (set VITE_STT_API_KEY).');
+  }
+
   let transcript = initialTranscript;
   const pending: Uint8Array[] = [];
   let open = false;
