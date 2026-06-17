@@ -1,0 +1,21 @@
+{
+  "package_id": "com.robsartin.stepwise",
+  "edition": "202601",
+  "name": "StepWise",
+  "version": "0.1.0",
+  "min_app_version": "2.0.0",
+  "min_sdk_version": "0.0.10",
+  "entrypoint": "index.html",
+  "permissions": [
+    {
+      "name": "g2-microphone",
+      "desc": "Capture audio from the glasses mic for hands-free voice commands."
+    },
+    {
+      "name": "network",
+      "whitelist": ["api.anthropic.com"],
+      "desc": "Generate a recipe on demand from a dish name."
+    }
+  ],
+  "supported_languages": ["en"]
+}

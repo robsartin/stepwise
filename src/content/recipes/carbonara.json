@@ -1,0 +1,45 @@
+{
+  "id": "carbonara",
+  "title": "Spaghetti Carbonara",
+  "servings": 2,
+  "ingredients": [
+    "200g spaghetti",
+    "2 large eggs + 1 yolk",
+    "50g pecorino romano, grated",
+    "100g guanciale, diced",
+    "Black pepper",
+    "Salt for the pasta water"
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "text": "Bring a large pot of well-salted water to a boil.",
+      "durationSec": 360,
+      "note": "~6 min to boil"
+    },
+    {
+      "index": 1,
+      "text": "Whisk the eggs, yolk, and pecorino into a paste. Season with black pepper."
+    },
+    {
+      "index": 2,
+      "text": "Crisp the guanciale in a cold, dry pan over medium heat until golden.",
+      "durationSec": 300,
+      "note": "render slowly"
+    },
+    {
+      "index": 3,
+      "text": "Add spaghetti to the boiling water and cook until al dente.",
+      "durationSec": 540,
+      "note": "~9 min"
+    },
+    { "index": 4, "text": "Reserve a cup of pasta water, then drain the spaghetti." },
+    { "index": 5, "text": "Toss the hot pasta with the guanciale off the heat." },
+    {
+      "index": 6,
+      "text": "Stir in the egg mixture, loosening with pasta water until silky. Do NOT scramble.",
+      "note": "off the heat"
+    },
+    { "index": 7, "text": "Plate, top with more pecorino and pepper, and serve immediately." }
+  ]
+}
