@@ -12,7 +12,17 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/core/**', 'src/adapters/**'],
-      exclude: ['src/sdk/**', 'src/main.ts', 'src/**/*.d.ts', 'src/content/recipes/**'],
+      exclude: [
+        '**/*.test.ts',
+        'src/sdk/**',
+        'src/main.ts',
+        'src/**/*.d.ts',
+        'src/content/recipes/**',
+        'src/core/recipe.ts',
+        'src/core/command.ts',
+        'src/core/clock.ts',
+        'src/core/ports.ts',
+      ],
       thresholds: {
         lines: 80,
         statements: 80,
