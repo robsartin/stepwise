@@ -52,7 +52,8 @@ const renderer = new SdkRenderer(bridge);
 // Two modes share the same three containers: the picker (choose a recipe) and a
 // cooking session (step through the chosen one). The shell owns which is active;
 // each controller owns the decisions within its mode.
-const menu = new MenuController(recipes, (view) => renderer.renderMenu(view));
+const entries = recipes.map((recipe) => ({ label: recipe.title, recipe }));
+const menu = new MenuController(entries, (view) => renderer.renderMenu(view));
 let session: StepWiseSession | null = null;
 
 function showPicker(): void {
@@ -62,7 +63,9 @@ function showPicker(): void {
 }
 
 function startCooking(): void {
-  session = new StepWiseSession(menu.selected(), realClock(), (view) => renderer.render(view));
+  session = new StepWiseSession(menu.selected().recipe, realClock(), (view) =>
+    renderer.render(view),
+  );
   session.start();
 }
 

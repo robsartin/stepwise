@@ -1,23 +1,27 @@
 import { describe, it, expect } from 'vitest';
 import { MenuController } from './menu';
-import type { Recipe } from './recipe';
 import type { MenuView } from './ports';
 
-const recipes: Recipe[] = [
-  { id: 'a', title: 'Alpha', ingredients: [], steps: [{ index: 0, text: 'x' }] },
-  { id: 'b', title: 'Bravo', ingredients: [], steps: [{ index: 0, text: 'y' }] },
-  { id: 'c', title: 'Charlie', ingredients: [], steps: [{ index: 0, text: 'z' }] },
+interface Entry {
+  id: string;
+  label: string;
+}
+
+const entries: Entry[] = [
+  { id: 'a', label: 'Alpha' },
+  { id: 'b', label: 'Bravo' },
+  { id: 'c', label: 'Charlie' },
 ];
 
 function setup() {
   const views: MenuView[] = [];
-  const menu = new MenuController(recipes, (v) => views.push(v));
+  const menu = new MenuController(entries, (v) => views.push(v));
   menu.start();
   return { menu, views, last: () => views[views.length - 1] };
 }
 
 describe('MenuController', () => {
-  it('emits all recipe titles on start, with the first highlighted', () => {
+  it('emits all entry labels on start, with the first highlighted', () => {
     const { last } = setup();
     expect(last().items).toEqual([
       { label: 'Alpha', selected: true },
@@ -46,10 +50,10 @@ describe('MenuController', () => {
     expect(last().items.map((i) => i.selected)).toEqual([false, false, true]);
   });
 
-  it('selected() returns the highlighted recipe', () => {
+  it('selected() returns the highlighted entry', () => {
     const { menu } = setup();
     menu.handle('down');
-    expect(menu.selected().id).toBe('b');
+    expect(menu.selected()).toEqual({ id: 'b', label: 'Bravo' });
   });
 
   it('ignores select and exit (no movement, no extra emit)', () => {
