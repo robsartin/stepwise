@@ -4,52 +4,63 @@ import {
   CreateStartUpPageContainer,
   OsEventTypeList,
 } from '@evenrealities/even_hub_sdk';
-import type { Recipe } from './core/recipe';
-import carbonara from './content/recipes/carbonara.json';
+import { loadBundledRecipes } from './adapters/content/bundled';
+import { StepWiseSession } from './core/session';
+import { SdkRenderer } from './sdk/renderer';
+import { AsrCommandSource } from './sdk/asr-source';
+import { eventToCommand } from './sdk/events';
 
-// Composition root. For now this boots the bridge and paints the first step of a
-// bundled recipe so the scaffold runs in the simulator. The navigation /
-// timer / voice-command wiring is built test-first in the core (see CLAUDE.md)
-// and plugged in here once those units exist.
-
-const recipe = carbonara as unknown as Recipe;
-
+const recipe = loadBundledRecipes()[0];
 const bridge = await waitForEvenAppBridge();
 
-const header = new TextContainerProperty({
-  xPosition: 0,
-  yPosition: 0,
-  width: 576,
-  height: 40,
-  borderWidth: 0,
-  borderColor: 5,
-  paddingLength: 4,
-  containerID: 1,
-  containerName: 'header',
-  content: `${recipe.title}    1 / ${recipe.steps.length}`,
-  isEventCapture: 0,
-});
+function container(
+  containerID: number,
+  containerName: string,
+  yPosition: number,
+  height: number,
+  content: string,
+  isEventCapture: 0 | 1,
+) {
+  return new TextContainerProperty({
+    xPosition: 0,
+    yPosition,
+    width: 576,
+    height,
+    borderWidth: 0,
+    borderColor: 5,
+    paddingLength: 4,
+    containerID,
+    containerName,
+    content,
+    isEventCapture,
+  });
+}
 
-const body = new TextContainerProperty({
-  xPosition: 0,
-  yPosition: 48,
-  width: 576,
-  height: 240,
-  borderWidth: 0,
-  borderColor: 5,
-  paddingLength: 4,
-  containerID: 2,
-  containerName: 'body',
-  content: recipe.steps[0]?.text ?? '(empty recipe)',
-  isEventCapture: 1,
-});
-
-const created = await bridge.createStartUpPageContainer(
-  new CreateStartUpPageContainer({ containerTotalNum: 2, textObject: [header, body] }),
+await bridge.createStartUpPageContainer(
+  new CreateStartUpPageContainer({
+    containerTotalNum: 3,
+    textObject: [
+      container(1, 'header', 0, 40, recipe.title, 0),
+      container(2, 'body', 48, 200, recipe.steps[0].text, 1),
+      container(3, 'footer', 252, 36, 'say "next" to begin', 0),
+    ],
+  }),
 );
-if (created !== 0) console.error('createStartUpPageContainer failed:', created);
+
+const renderer = new SdkRenderer(bridge);
+const session = new StepWiseSession(recipe, realClock(), (view) => renderer.render(view));
+session.start();
+
+const asr = new AsrCommandSource(import.meta.env.VITE_STT_API_KEY ?? '', (err) =>
+  console.error('ASR error:', err),
+);
+const unsubscribeAsr = asr.subscribe((command) => session.handle(command));
+await bridge.audioControl(true);
 
 const unsubscribe = bridge.onEvenHubEvent((event) => {
+  const pcm = event.audioEvent?.audioPcm;
+  if (pcm) asr.sendPcm(pcm);
+
   const sysType = event.sysEvent?.eventType ?? null;
   const textType = event.textEvent?.eventType ?? null;
   if (
@@ -57,18 +68,22 @@ const unsubscribe = bridge.onEvenHubEvent((event) => {
     textType === OsEventTypeList.DOUBLE_CLICK_EVENT
   ) {
     bridge.shutDownPageContainer(1);
+    return;
   }
+  const command = eventToCommand(event);
+  if (command) session.handle(command);
 });
 
-window.addEventListener('beforeunload', () => unsubscribe());
+window.addEventListener('beforeunload', () => {
+  bridge.audioControl(false);
+  unsubscribeAsr();
+  unsubscribe();
+});
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML = `
-  <main style="margin:auto;padding:24px;max-width:680px;box-sizing:border-box;">
-    <h1 style="font-size:18px;font-weight:600;margin:0 0 12px;">StepWise — ${recipe.title}</h1>
-    <pre style="background:#2e2e2e;border:1px solid #3e3e3e;border-radius:12px;padding:20px;font-size:16px;line-height:1.5;white-space:pre-wrap;color:#e5e5e5;margin:0;">${recipe.steps[0]?.text ?? ''}</pre>
-    <footer style="font-size:12px;color:#7b7b7b;text-align:center;margin-top:16px;">
-      Scaffold preview · navigation, timers &amp; voice commands land next (TDD core) · double-tap to exit
-    </footer>
-  </main>
-`;
+function realClock() {
+  return {
+    now: () => Date.now(),
+    setTimeout: (cb: () => void, ms: number) => window.setTimeout(cb, ms),
+    clearTimeout: (handle: number) => window.clearTimeout(handle),
+  };
+}
