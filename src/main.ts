@@ -60,10 +60,17 @@ const renderer = new SdkRenderer(bridge);
 const anthropicKey = import.meta.env.VITE_ANTHROPIC_API_KEY ?? '';
 const generator = anthropicKey ? createAnthropicGenerator(anthropicKey) : null;
 
+const sttKey = import.meta.env.VITE_STT_API_KEY ?? '';
+const asr = new AsrCommandSource(sttKey, (err) => console.error('ASR error:', err));
+
+// "Ask for a dish" needs both a mic (STT) to hear the name and a generator to
+// build the recipe from it.
+const voiceCapable = Boolean(sttKey) && Boolean(generator);
+
 // The picker mixes bundled recipes with AI generate entries. The shell owns
 // which mode is active (picker / cooking / a transient message); each
 // controller owns the decisions within its mode.
-const entries = buildPickerEntries(recipes, generator ? AI_DISHES : [], false);
+const entries = buildPickerEntries(recipes, generator ? AI_DISHES : [], voiceCapable);
 const menu = new MenuController(entries, (view) => renderer.renderMenu(view));
 
 type Mode = 'picker' | 'cooking' | 'message';
@@ -73,6 +80,7 @@ let session: StepWiseSession | null = null;
 function showPicker(): void {
   session?.stop();
   session = null;
+  asr.cancelDishCapture();
   mode = 'picker';
   menu.start();
 }
@@ -96,19 +104,26 @@ async function generate(dishName: string): Promise<void> {
   }
 }
 
+// Listen for a spoken dish name, then generate it. Needs the cooking mic, so
+// the STT stream is feeding snapshots already (subscribed below).
+function askForDish(): void {
+  mode = 'message';
+  renderer.renderMessage('StepWise', 'Say a dish name...', 'listening');
+  asr.startDishCapture((dish) => void generate(dish));
+}
+
 function selectEntry(): void {
   const entry = menu.selected();
   if (entry.kind === 'recipe') {
     cook(entry.recipe);
   } else if (entry.kind === 'generate') {
     void generate(entry.dishName);
+  } else if (entry.kind === 'voice') {
+    askForDish();
   }
 }
 
 showPicker();
-
-const sttKey = import.meta.env.VITE_STT_API_KEY ?? '';
-const asr = new AsrCommandSource(sttKey, (err) => console.error('ASR error:', err));
 
 // Gesture/event input is wired FIRST and synchronously. Navigation must never
 // depend on microphone or STT setup — those can fail or hang where there's no
