@@ -33,6 +33,14 @@ export class SdkRenderer implements Renderer {
       .then(() => this.write(FOOTER_ID, 'footer', view.hint));
   }
 
+  /** Paint a transient three-line screen (e.g. "Generating…" or an error). */
+  renderMessage(header: string, body: string, footer: string): void {
+    this.queue = this.queue
+      .then(() => this.write(HEADER_ID, 'header', header))
+      .then(() => this.write(BODY_ID, 'body', body))
+      .then(() => this.write(FOOTER_ID, 'footer', footer));
+  }
+
   private write(containerID: number, containerName: string, content: string): Promise<unknown> {
     return this.bridge.textContainerUpgrade(
       new TextContainerUpgrade({ containerID, containerName, content }),

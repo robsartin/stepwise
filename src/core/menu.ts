@@ -1,15 +1,14 @@
-import type { Recipe } from './recipe';
 import type { MenuCommand } from './command';
 import type { MenuView } from './ports';
 
-// Pure recipe picker. Holds the list and a wrapping cursor; 'up'/'down' move
-// the highlight and re-emit. 'select'/'exit' belong to the shell, so they're
-// ignored here. No SDK, no IO.
-export class MenuController {
+// Pure picker over any labeled entries. Holds the list and a wrapping cursor;
+// 'up'/'down' move the highlight and re-emit. 'select'/'exit' belong to the
+// shell, so they're ignored here. No SDK, no IO.
+export class MenuController<T extends { label: string }> {
   private cursor = 0;
 
   constructor(
-    private readonly recipes: Recipe[],
+    private readonly entries: T[],
     private readonly emit: (view: MenuView) => void,
   ) {}
 
@@ -18,7 +17,7 @@ export class MenuController {
   }
 
   handle(command: MenuCommand): void {
-    const count = this.recipes.length;
+    const count = this.entries.length;
     if (command === 'down') {
       this.cursor = (this.cursor + 1) % count;
     } else if (command === 'up') {
@@ -29,15 +28,15 @@ export class MenuController {
     this.render();
   }
 
-  selected(): Recipe {
-    return this.recipes[this.cursor];
+  selected(): T {
+    return this.entries[this.cursor];
   }
 
   private render(): void {
     this.emit({
       title: 'Choose a recipe',
-      items: this.recipes.map((recipe, i) => ({
-        label: recipe.title,
+      items: this.entries.map((entry, i) => ({
+        label: entry.label,
         selected: i === this.cursor,
       })),
       hint: 'scroll: move   click: start',
