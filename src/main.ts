@@ -98,8 +98,8 @@ async function generate(dishName: string): Promise<void> {
   try {
     cook(await generateRecipe(dishName, generator));
   } catch (err) {
+    // Still in 'message' mode (cook() only runs on success), so just repaint.
     console.error('recipe generation failed:', err);
-    mode = 'message';
     renderer.renderMessage('StepWise', `Could not make\n${dishName}`, 'double-tap for menu');
   }
 }

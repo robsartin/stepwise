@@ -17,23 +17,15 @@ export class SdkRenderer implements Renderer {
     const footer = view.timer
       ? `${view.timer.label === 'DONE' ? '** DONE **' : view.timer.label}  ${formatDuration(view.timer.remainingSec)}`
       : 'say: next / back / repeat';
-
-    this.queue = this.queue
-      .then(() => this.write(HEADER_ID, 'header', header))
-      .then(() => this.write(BODY_ID, 'body', body))
-      .then(() => this.write(FOOTER_ID, 'footer', footer));
+    this.renderMessage(header, body, footer);
   }
 
   renderMenu(view: MenuView): void {
     const body = view.items.map((item) => `${item.selected ? '> ' : '  '}${item.label}`).join('\n');
-
-    this.queue = this.queue
-      .then(() => this.write(HEADER_ID, 'header', view.title))
-      .then(() => this.write(BODY_ID, 'body', body))
-      .then(() => this.write(FOOTER_ID, 'footer', view.hint));
+    this.renderMessage(view.title, body, view.hint);
   }
 
-  /** Paint a transient three-line screen (e.g. "Generating…" or an error). */
+  /** Paint the three containers (header / body / footer), serialized on the queue. */
   renderMessage(header: string, body: string, footer: string): void {
     this.queue = this.queue
       .then(() => this.write(HEADER_ID, 'header', header))
